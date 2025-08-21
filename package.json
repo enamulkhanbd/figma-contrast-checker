@@ -4,7 +4,8 @@
   "description": "",
   "main": "code.js",
   "scripts": {
-    "build": "tsc -w"
+    "build": "tsc && copyfiles -u 1 src/*.html dist",
+    "watch": "tsc -w"
   },
   "keywords": [],
   "author": "",
@@ -12,6 +13,7 @@
   "type": "commonjs",
   "devDependencies": {
     "@figma/plugin-typings": "^1.117.0",
+    "copyfiles": "^2.4.1",
     "typescript": "^5.9.2"
   }
 }

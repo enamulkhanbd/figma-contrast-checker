@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WCAG Contrast Checker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      :root {
+        --bg-primary: #011803;
+        --bg-secondary: #1f2937;
+        --text-primary: #ffffff;
+        --text-secondary: #9ca3af;
+        --border-color: #4b5563;
+        --accent-color: #22c55e;
+        --accent-hover: #16a34a;
+        --ring-color: #22c55e;
+        --icon-color: #9ca3af;
+        --selected-bg: #224422;
+        --selected-shadow: #16a34a;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        padding: 16px;
+      }
+      .result-item {
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out,
+          box-shadow 0.2s ease-in-out;
+        border-radius: 0.5rem;
+      }
+      .result-item:hover {
+        background-color: #333333;
+      }
+      .result-item.selected {
+        box-shadow: 0 0 0 2px var(--selected-shadow);
+        background-color: var(--selected-bg);
+      }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .radio-label input:checked + .radio-bg {
+        background-color: var(--accent-color);
+        border-color: var(--accent-color);
+      }
+      .radio-label input:checked + .radio-bg span {
+        transform: translateX(100%);
+        background-color: white;
+      }
+      .filter-btn.active {
+        background-color: var(--accent-color);
+        color: white;
+      }
+      .filter-btn {
+        transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="flex flex-col h-full">
+      <h1 class="text-xl font-bold mb-4 text-center">Contrast Checker</h1>
+
+      <div class="flex w-full bg-gray-800 rounded-md p-1 mb-4">
+        <button
+          id="filter-all"
+          class="filter-btn active w-1/3 rounded-md py-1 text-sm font-medium"
+        >
+          All
+        </button>
+        <button
+          id="filter-text"
+          class="filter-btn w-1/3 rounded-md py-1 text-sm font-medium"
+        >
+          Text
+        </button>
+        <button
+          id="filter-color"
+          class="filter-btn w-1/3 rounded-md py-1 text-sm font-medium"
+        >
+          Colors
+        </button>
+      </div>
+
+      <div class="relative mb-4">
+        <input
+          type="text"
+          id="search-input"
+          placeholder="Search..."
+          class="w-full bg-gray-800 border border-gray-700 text-white placeholder-gray-500 text-sm rounded-md pl-10 pr-4 py-2 focus:outline-none focus:ring-2"
+          style="--tw-ring-color: var(--ring-color)"
+        />
+        <div
+          class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+        >
+          <svg
+            class="h-5 w-5 text-gray-500"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </div>
+      </div>
+
+      <div
+        id="wcag-toggle-container"
+        class="flex items-center justify-center space-x-4 mb-4"
+      >
+        <span class="text-sm font-medium text-gray-300">AA</span>
+        <label for="wcag-toggle" class="radio-label cursor-pointer">
+          <input type="checkbox" id="wcag-toggle" class="hidden" />
+          <div
+            class="radio-bg w-12 h-6 rounded-full bg-gray-700 border border-gray-600 flex items-center transition-colors"
+          >
+            <span
+              class="h-5 w-5 bg-white rounded-full shadow-md transform transition-transform"
+            ></span>
+          </div>
+        </label>
+        <span class="text-sm font-medium text-gray-300">AAA</span>
+      </div>
+
+      <button
+        id="scan-btn"
+        class="w-full text-white font-medium py-2 px-4 rounded-md transition-colors"
+        style="background-color: var(--accent-color)"
+      >
+        Scan Selection
+      </button>
+
+      <div
+        id="results-container"
+        class="mt-6 flex-grow overflow-y-auto no-scrollbar space-y-2"
+      >
+        <p id="placeholder" class="text-gray-400 text-center mt-8">
+          Select an object and scan to check contrast.
+        </p>
+      </div>
+
+      <footer class="mt-auto pt-4">
+        <div class="flex justify-between items-center text-xs text-gray-500">
+          <span>JustGo UX Team</span>
+          <span class="italic">v1.0.0 Beta</span>
+        </div>
+      </footer>
+    </div>
+
+    <script>
+      const scanBtn = document.getElementById("scan-btn");
+      const resultsContainer = document.getElementById("results-container");
+      const placeholder = document.getElementById("placeholder");
+      const searchInput = document.getElementById("search-input");
+      const wcagToggle = document.getElementById("wcag-toggle");
+      const wcagToggleContainer = document.getElementById(
+        "wcag-toggle-container",
+      );
+      const filterBtns = {
+        all: document.getElementById("filter-all"),
+        text: document.getElementById("filter-text"),
+        color: document.getElementById("filter-color"),
+      };
+
+      let allResults = [];
+      let currentWcagLevel = "AA";
+      let currentFilter = "all";
+
+      const setActiveFilter = (filterName) => {
+        currentFilter = filterName;
+        for (const key in filterBtns) {
+          filterBtns[key].classList.toggle("active", key === filterName);
+        }
+        wcagToggleContainer.style.display =
+          filterName === "color" ? "none" : "flex";
+        filterAndRender();
+      };
+
+      filterBtns.all.onclick = () => setActiveFilter("all");
+      filterBtns.text.onclick = () => setActiveFilter("text");
+      filterBtns.color.onclick = () => setActiveFilter("color");
+
+      scanBtn.onclick = () => {
+        scanBtn.textContent = "Scanning...";
+        scanBtn.disabled = true;
+        searchInput.value = "";
+        placeholder.textContent = "Scanning your selection...";
+        resultsContainer.innerHTML = "";
+        resultsContainer.appendChild(placeholder);
+        parent.postMessage({ pluginMessage: { type: "scan-selection" } }, "*");
+      };
+
+      const filterAndRender = () => {
+        const searchTerm = searchInput.value.toLowerCase();
+        const filteredByType =
+          currentFilter === "all"
+            ? allResults
+            : allResults.filter((res) => res.type === currentFilter);
+        const finalFilteredResults = filteredByType.filter((res) =>
+          res.name.toLowerCase().includes(searchTerm),
+        );
+        renderResults(finalFilteredResults);
+        if (finalFilteredResults.length === 0 && allResults.length > 0) {
+          resultsContainer.innerHTML = `<p class="text-gray-400 text-center mt-8">No matching elements found.</p>`;
+        }
+      };
+
+      searchInput.addEventListener("input", filterAndRender);
+      wcagToggle.addEventListener("change", () => {
+        currentWcagLevel = wcagToggle.checked ? "AAA" : "AA";
+        filterAndRender();
+      });
+
+      function renderResults(results) {
+        if (allResults.length === 0) {
+          resultsContainer.innerHTML = `<p class="text-gray-400 text-center mt-8">No text or color elements found in selection.</p>`;
+          return;
+        }
+
+        const resultsHTML = results
+          .map((res) => {
+            const isPass = currentWcagLevel === "AA" ? res.passAA : res.passAAA;
+            const requiredRatio =
+              currentWcagLevel === "AA" ? res.requiredAA : res.requiredAAA;
+            const passColor = isPass ? "text-green-400" : "text-red-400";
+            const icon = isPass
+              ? `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`
+              : `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+
+            let contentHTML = "";
+            if (res.type === "text") {
+              contentHTML = `
+                        <p class="font-semibold truncate" title="${res.name}">${res.name}</p>
+                        <p class="text-sm text-gray-400">
+                            Contrast: <span class="font-bold ${passColor}">${res.contrast}:1</span>
+                            <span class="ml-2">(Min ${currentWcagLevel}: ${requiredRatio}:1)</span>
+                        </p>`;
+            } else {
+              // Color type
+              contentHTML = `
+                        <div class="flex items-center">
+                            <div class="w-4 h-4 rounded-full border border-gray-500 mr-2" style="background-color: ${res.hex};"></div>
+                            <p class="font-semibold truncate" title="${res.name}">${res.name}</p>
+                        </div>
+                        <p class="text-sm text-gray-400 pl-6">
+                            Contrast: <span class="font-bold ${passColor}">${res.contrast}:1</span>
+                            <span class="ml-2">(Min: 3:1)</span>
+                        </p>`;
+            }
+
+            return `
+                <div class="result-item flex items-start p-3 border-b border-gray-700" data-id="${res.id}">
+                    <div class="mr-3 pt-1">${icon}</div>
+                    <div class="flex-grow overflow-hidden">${contentHTML}</div>
+                </div>`;
+          })
+          .join("");
+
+        resultsContainer.innerHTML = resultsHTML.replace(
+          /border-b border-gray-700/g,
+          "",
+        ); // Remove borders for the new layout
+
+        document.querySelectorAll(".result-item").forEach((item) => {
+          item.addEventListener("click", () => {
+            document
+              .querySelectorAll(".result-item.selected")
+              .forEach((selectedItem) => {
+                selectedItem.classList.remove("selected");
+              });
+            item.classList.add("selected");
+
+            const id = item.getAttribute("data-id");
+            parent.postMessage(
+              { pluginMessage: { type: "select-node", id: id } },
+              "*",
+            );
+          });
+        });
+      }
+
+      window.onmessage = (event) => {
+        const msg = event.data.pluginMessage;
+        if (msg.type === "scan-results") {
+          scanBtn.textContent = "Scan Selection";
+          scanBtn.disabled = false;
+          if (document.body.contains(placeholder)) {
+            placeholder.remove();
+          }
+          if (msg.error) {
+            resultsContainer.innerHTML = `<p class="text-yellow-400 text-center mt-8">${msg.error}</p>`;
+            return;
+          }
+          allResults = msg.results;
+          setActiveFilter("all");
+        } else if (msg.type === "selection-changed") {
+          const selectedIds = msg.ids;
+          document.querySelectorAll(".result-item").forEach((item) => {
+            item.classList.toggle(
+              "selected",
+              selectedIds.includes(item.dataset.id),
+            );
+          });
+        }
+      };
+    </script>
+  </body>
+</html>

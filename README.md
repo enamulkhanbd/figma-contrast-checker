@@ -47,19 +47,31 @@ The plugin recursively scans through all layers within your selected frame.
 
 ---
 
+## Known Issues
+
+- **Multiple Fills**: The plugin currently only checks the top-most solid fill on a layer. It does not analyze layers with gradients or multiple visible fills.
+
+---
+
 ## Development Setup
 
 To contribute or modify the plugin, follow these steps:
 
 1.  **Clone the Repository**: Get a local copy of the plugin files.
-2.  **Install Dependencies**: Open a terminal in the project's root directory and run:
+2.  **Organize Files**: The project uses a `src` directory for source files (`code.ts`, `ui.html`) and a `dist` directory for the compiled output that Figma uses.
+3.  **Install Dependencies**: Open a terminal in the project's root directory and run:
     ```bash
     npm install
     ```
-3.  **Start the Compiler**: Run the build script in watch mode. This will automatically recompile `code.ts` into `code.js` every time you save a change.
+4.  **Build the Plugin**: To compile your TypeScript and copy the HTML to the `dist` folder, run:
     ```bash
     npm run build
     ```
+5.  **Watch for Changes**: For a better development workflow, run the watch script. This will automatically recompile `src/code.ts` into `dist/code.js` every time you save a change.
+    ```bash
+    npm run watch
+    ```
+    _Note: If you change `ui.html`, you will need to run `npm run build` again to copy it to the `dist` folder._
 
 ---
 
@@ -67,5 +79,5 @@ To contribute or modify the plugin, follow these steps:
 
 1.  **Open Figma**: Go to the main menu.
 2.  **Navigate to Plugins**: Click `Plugins` > `Development` > `Import plugin from manifest...`.
-3.  **Select Manifest File**: Locate the `manifest.json` file in the plugin's directory and open it.
+3.  **Select Manifest File**: Locate the root `manifest.json` file in the plugin's directory and open it. This file is already configured to point to the compiled code in the `dist` folder.
 4.  **Run the Plugin**: The WCAG Contrast Checker will now be available in your `Plugins` > `Development` menu.

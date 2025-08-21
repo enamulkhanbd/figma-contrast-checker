@@ -241,15 +241,31 @@
             plugin files.
           </li>
           <li>
+            <strong>Organize Files</strong>: Create a <code>src</code> directory
+            and move <code>code.ts</code> and <code>ui.html</code> into it. Your
+            compiled files will go into a <code>dist</code> directory.
+          </li>
+          <li>
             <strong>Install Dependencies</strong>: Open a terminal in the
             project's root directory and run:
             <pre><code>npm install</code></pre>
           </li>
           <li>
-            <strong>Start the Compiler</strong>: Run the build script in watch
-            mode. This will automatically recompile <code>code.ts</code> into
-            <code>code.js</code> every time you save a change.
+            <strong>Build the Plugin</strong>: To compile your TypeScript and
+            copy the HTML to the <code>dist</code> folder, run:
             <pre><code>npm run build</code></pre>
+          </li>
+          <li>
+            <strong>Watch for Changes</strong>: For a better development
+            workflow, run the watch script. This will automatically recompile
+            <code>code.ts</code> into <code>dist/code.js</code> every time you
+            save a change.
+            <pre><code>npm run watch</code></pre>
+            <p class="text-sm text-gray-400 mt-2">
+              Note: If you change <code>ui.html</code>, you will need to run
+              <code>npm run build</code> again to copy it to the
+              <code>dist</code> folder.
+            </p>
           </li>
         </ol>
 
@@ -266,9 +282,10 @@
             <code>Import plugin from manifest...</code>.
           </li>
           <li>
-            <strong>Select Manifest File</strong>: Locate the
+            <strong>Select Manifest File</strong>: Locate the root
             <code>manifest.json</code> file in the plugin's directory and open
-            it.
+            it. This file is already configured to point to the compiled code in
+            your <code>dist</code> folder.
           </li>
           <li>
             <strong>Run the Plugin</strong>: The WCAG Contrast Checker will now
