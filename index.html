@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WCAG Contrast Checker Figma Plugin - README</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .markdown-body h1 {
+        border-bottom: 1px solid #30363d;
+      }
+      .markdown-body h2 {
+        border-bottom: 1px solid #30363d;
+      }
+      .markdown-body code {
+        background-color: #2d333b;
+        border-radius: 6px;
+        padding: 0.2em 0.4em;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo,
+          monospace;
+      }
+      .markdown-body pre {
+        background-color: #161b22;
+        padding: 16px;
+        border-radius: 6px;
+        overflow: auto;
+      }
+      .markdown-body pre code {
+        background-color: transparent;
+        padding: 0;
+      }
+      .markdown-body ul,
+      .markdown-body ol {
+        padding-left: 2em;
+      }
+      .markdown-body li {
+        margin-bottom: 0.5em;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-900 text-gray-300">
+    <main class="max-w-4xl mx-auto p-4 sm:p-6 md:p-8">
+      <article class="markdown-body">
+        <h1 class="text-3xl sm:text-4xl font-bold pb-2 mb-4 text-white">
+          WCAG Contrast Checker Figma Plugin
+        </h1>
+        <p class="mb-6 text-lg">
+          A powerful Figma plugin to ensure your designs meet WCAG 2.1
+          accessibility standards by checking color contrast for both text and
+          non-text elements in real-time.
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-4 mb-8">
+          <a
+            href="https://github.com/enamulkhanbd/figma-contrast-checker/releases"
+            class="w-full sm:w-auto flex-grow sm:flex-grow-0 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg text-center transition-colors"
+          >
+            Download Plugin
+          </a>
+        </div>
+
+        <hr class="my-8 border-gray-700" />
+
+        <h2 class="text-2xl font-bold pb-2 mb-4 text-white">How to Use</h2>
+        <ol class="list-decimal space-y-2 mb-6">
+          <li>
+            <strong>Select a Frame</strong>: In your Figma file, select any
+            frame, group, or section you want to check.
+          </li>
+          <li>
+            <strong>Run the Plugin</strong>: Go to <code>Plugins</code> &gt;
+            <code>WCAG Contrast Checker</code>.
+          </li>
+          <li>
+            <strong>Scan Selection</strong>: Click the
+            <strong>"Scan Selection"</strong> button in the plugin window.
+          </li>
+          <li>
+            <strong>View Results</strong>: The plugin will display a list of all
+            visible text and color layers from your selection.
+          </li>
+          <li>
+            <strong>Filter & Analyze</strong>:
+            <ul class="list-disc pl-5 mt-2 space-y-1">
+              <li>
+                Use the <strong>All</strong>, <strong>Text</strong>, and
+                <strong>Colors</strong> filters to sort the results.
+              </li>
+              <li>
+                Toggle between <strong>AA</strong> and
+                <strong>AAA</strong> standards for text elements.
+              </li>
+              <li>Use the search bar to find specific layers by name.</li>
+            </ul>
+          </li>
+          <li>
+            <strong>Locate Layers</strong>: Click on any item in the results
+            list to select and zoom to that specific layer on your Figma canvas.
+          </li>
+        </ol>
+
+        <hr class="my-8 border-gray-700" />
+
+        <h2 class="text-2xl font-bold pb-2 mb-4 text-white">
+          Features Explained
+        </h2>
+        <ul class="list-disc space-y-3 mb-6">
+          <li>
+            <strong>Comprehensive Scanning</strong>: Checks both text elements
+            and non-text UI elements (like icons and shapes) for WCAG contrast
+            compliance.
+          </li>
+          <li>
+            <strong>Dual WCAG Standards</strong>: Easily toggle between
+            <strong>AA</strong> and the stricter <strong>AAA</strong> compliance
+            levels for text contrast. Non-text elements are checked against the
+            required <code>3:1</code> ratio.
+          </li>
+          <li>
+            <strong>Hidden Layer Detection</strong>: The plugin automatically
+            ignores any hidden layers (<code>visible: false</code>) in your
+            selection, so you only get results for what's actually visible in
+            your design.
+          </li>
+          <li>
+            <strong>Interactive Results List</strong>:
+            <ul class="list-disc pl-5 mt-2 space-y-1">
+              <li>
+                <strong>Two-Way Sync</strong>: Clicking a layer on the canvas
+                highlights it in the plugin, and clicking an item in the plugin
+                selects it on the canvas.
+              </li>
+              <li>
+                <strong>Visual Feedback</strong>: Results are clearly marked
+                with Pass (✅) or Fail (❌) icons.
+              </li>
+              <li>
+                <strong>Color Swatches</strong>: Color results include a visual
+                swatch of the color being checked.
+              </li>
+            </ul>
+          </li>
+          <li>
+            <strong>Advanced Filtering</strong>: Quickly filter the results by
+            type (All, Text, Color) or search for specific layers by name.
+          </li>
+          <li>
+            <strong>Sleek Dark Mode UI</strong>: A clean, dark-themed interface
+            that's easy on the eyes.
+          </li>
+        </ul>
+
+        <hr class="my-8 border-gray-700" />
+
+        <h2 class="text-2xl font-bold pb-2 mb-4 text-white">How It Works</h2>
+        <p class="mb-4">
+          The plugin recursively scans through all layers within your selected
+          frame.
+        </p>
+        <ol class="list-decimal space-y-2 mb-6">
+          <li>
+            <strong>Node Traversal</strong>: It identifies all visible
+            <code>TEXT</code> nodes and any other visible nodes that have a
+            solid color fill.
+          </li>
+          <li>
+            <strong>Color Detection</strong>:
+            <ul class="list-disc pl-5 mt-2 space-y-1">
+              <li>
+                For any given layer, it identifies its foreground color (the
+                text color or the shape's fill).
+              </li>
+              <li>
+                It then traverses up the layer tree to find the first solid,
+                opaque background color. If no background is found, it defaults
+                to white.
+              </li>
+            </ul>
+          </li>
+          <li>
+            <strong>WCAG Calculation</strong>: It uses the official WCAG 2.1
+            formula to calculate the relative luminance of the foreground and
+            background colors and determines their contrast ratio.
+          </li>
+          <li>
+            <strong>Compliance Check</strong>:
+            <ul class="list-disc pl-5 mt-2 space-y-1">
+              <li>
+                <strong>Text</strong>: Compares the ratio against
+                <code>4.5:1</code> (AA) / <code>7:1</code> (AAA) for normal
+                text, and <code>3:1</code> (AA) / <code>4.5:1</code> (AAA) for
+                large text.
+              </li>
+              <li>
+                <strong>Colors</strong>: Compares the ratio against the standard
+                <code>3:1</code> for non-text elements.
+              </li>
+            </ul>
+          </li>
+        </ol>
+
+        <hr class="my-8 border-gray-700" />
+
+        <h2 class="text-2xl font-bold pb-2 mb-4 text-white">Known Issues</h2>
+        <ul class="list-disc space-y-2 mb-6">
+          <li>
+            <strong>Multiple Fills</strong>: The plugin currently only checks
+            the top-most solid fill on a layer. It does not analyze layers with
+            gradients or multiple visible fills.
+          </li>
+        </ul>
+
+        <hr class="my-8 border-gray-700" />
+
+        <h2 class="text-2xl font-bold pb-2 mb-4 text-white">
+          About the JustGo UX Team
+        </h2>
+        <p class="mb-6">
+          The JustGo UX Team is dedicated to creating intuitive, accessible, and
+          beautiful user experiences. We believe that accessibility is not an
+          afterthought but a core component of great design. This Contrast
+          Checker plugin was developed in-house to streamline our workflow and
+          ensure all our products meet the highest standards of usability for
+          everyone.
+        </p>
+
+        <hr class="my-8 border-gray-700" />
+
+        <h2 class="text-2xl font-bold pb-2 mb-4 text-white">
+          Development Setup
+        </h2>
+        <p class="mb-4">
+          To contribute or modify the plugin, follow these steps:
+        </p>
+        <ol class="list-decimal space-y-4 mb-6">
+          <li>
+            <strong>Clone the Repository</strong>: Get a local copy of the
+            plugin files.
+          </li>
+          <li>
+            <strong>Install Dependencies</strong>: Open a terminal in the
+            project's root directory and run:
+            <pre><code>npm install</code></pre>
+          </li>
+          <li>
+            <strong>Start the Compiler</strong>: Run the build script in watch
+            mode. This will automatically recompile <code>code.ts</code> into
+            <code>code.js</code> every time you save a change.
+            <pre><code>npm run build</code></pre>
+          </li>
+        </ol>
+
+        <hr class="my-8 border-gray-700" />
+
+        <h2 class="text-2xl font-bold pb-2 mb-4 text-white">
+          How to Install in Figma
+        </h2>
+        <ol class="list-decimal space-y-2 mb-6">
+          <li><strong>Open Figma</strong>: Go to the main menu.</li>
+          <li>
+            <strong>Navigate to Plugins</strong>: Click
+            <code>Plugins</code> &gt; <code>Development</code> &gt;
+            <code>Import plugin from manifest...</code>.
+          </li>
+          <li>
+            <strong>Select Manifest File</strong>: Locate the
+            <code>manifest.json</code> file in the plugin's directory and open
+            it.
+          </li>
+          <li>
+            <strong>Run the Plugin</strong>: The WCAG Contrast Checker will now
+            be available in your <code>Plugins</code> &gt;
+            <code>Development</code> menu.
+          </li>
+        </ol>
+      </article>
+    </main>
+  </body>
+</html>
