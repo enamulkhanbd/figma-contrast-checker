@@ -1,8 +1,8 @@
 // This plugin scans the user's selection for text and solid color nodes,
 // calculates their color contrast against their background, and reports
-// whether they meet WCAG 2.1 standards.
+// whether they meet WCAG 2.1 AA standards.
 
-figma.showUI(__html__, { width: 400, height: 670 });
+figma.showUI(__html__, { width: 400, height: 700 });
 
 // Listen for selection changes on the Figma canvas and notify the UI
 figma.on("selectionchange", () => {
@@ -37,16 +37,13 @@ figma.ui.onmessage = async (msg) => {
         const fontWeight = textNode.fontWeight as number;
         const isLarge = isLargeText(fontSize, fontWeight);
         const requiredRatioAA = isLarge ? 3 : 4.5;
-        const requiredRatioAAA = isLarge ? 4.5 : 7;
         return {
           type: "text",
           name: textNode.characters.substring(0, 50),
           contrast: contrastRatio.toFixed(2),
           id: textNode.id,
-          passAA: contrastRatio >= requiredRatioAA,
-          requiredAA: requiredRatioAA,
-          passAAA: contrastRatio >= requiredRatioAAA,
-          requiredAAA: requiredRatioAAA,
+          pass: contrastRatio >= requiredRatioAA,
+          required: requiredRatioAA,
         };
       }
       return null;
@@ -68,10 +65,8 @@ figma.ui.onmessage = async (msg) => {
           hex: rgbToHex(foregroundColor),
           contrast: contrastRatio.toFixed(2),
           id: colorNode.id,
-          passAA: contrastRatio >= requiredRatio,
-          requiredAA: requiredRatio,
-          passAAA: contrastRatio >= requiredRatio,
-          requiredAAA: requiredRatio,
+          pass: contrastRatio >= requiredRatio,
+          required: requiredRatio,
         };
       }
       return null;

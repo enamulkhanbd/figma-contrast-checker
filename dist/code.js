@@ -1,7 +1,7 @@
 "use strict";
 // This plugin scans the user's selection for text and solid color nodes,
 // calculates their color contrast against their background, and reports
-// whether they meet WCAG 2.1 standards.
+// whether they meet WCAG 2.1 AA standards.
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-figma.showUI(__html__, { width: 400, height: 670 });
+figma.showUI(__html__, { width: 400, height: 700 });
 // Listen for selection changes on the Figma canvas and notify the UI
 figma.on("selectionchange", () => {
     const selectedIds = figma.currentPage.selection.map((node) => node.id);
@@ -42,16 +42,13 @@ figma.ui.onmessage = (msg) => __awaiter(void 0, void 0, void 0, function* () {
                 const fontWeight = textNode.fontWeight;
                 const isLarge = isLargeText(fontSize, fontWeight);
                 const requiredRatioAA = isLarge ? 3 : 4.5;
-                const requiredRatioAAA = isLarge ? 4.5 : 7;
                 return {
                     type: "text",
                     name: textNode.characters.substring(0, 50),
                     contrast: contrastRatio.toFixed(2),
                     id: textNode.id,
-                    passAA: contrastRatio >= requiredRatioAA,
-                    requiredAA: requiredRatioAA,
-                    passAAA: contrastRatio >= requiredRatioAAA,
-                    requiredAAA: requiredRatioAAA,
+                    pass: contrastRatio >= requiredRatioAA,
+                    required: requiredRatioAA,
                 };
             }
             return null;
@@ -70,10 +67,8 @@ figma.ui.onmessage = (msg) => __awaiter(void 0, void 0, void 0, function* () {
                     hex: rgbToHex(foregroundColor),
                     contrast: contrastRatio.toFixed(2),
                     id: colorNode.id,
-                    passAA: contrastRatio >= requiredRatio,
-                    requiredAA: requiredRatio,
-                    passAAA: contrastRatio >= requiredRatio,
-                    requiredAAA: requiredRatio,
+                    pass: contrastRatio >= requiredRatio,
+                    required: requiredRatio,
                 };
             }
             return null;
