@@ -76,7 +76,8 @@
           </li>
           <li>
             <strong>Scan Selection</strong>: Click the
-            <strong>"Scan Selection"</strong> button in the plugin window.
+            <strong>"Scan Selection"</strong> button to check layers against
+            default or custom ratios.
           </li>
           <li>
             <strong>View Results</strong>: The plugin will display a list of all
@@ -89,12 +90,13 @@
                 Use the <strong>All</strong>, <strong>Text</strong>, and
                 <strong>Colors</strong> filters to sort the results.
               </li>
-              <li>
-                Toggle between <strong>AA</strong> and
-                <strong>AAA</strong> standards for text elements.
-              </li>
               <li>Use the search bar to find specific layers by name.</li>
             </ul>
+          </li>
+          <li>
+            <strong>Customize Settings</strong>: Click the settings icon (⚙️) to
+            open the settings page where you can switch themes and adjust
+            contrast ratios.
           </li>
           <li>
             <strong>Locate Layers</strong>: Click on any item in the results
@@ -110,20 +112,22 @@
         <ul class="list-disc space-y-3 mb-6">
           <li>
             <strong>Comprehensive Scanning</strong>: Checks both text elements
-            and non-text UI elements (like icons and shapes) for WCAG contrast
+            and non-text UI elements (like icons and shapes) for contrast
             compliance.
           </li>
           <li>
-            <strong>Dual WCAG Standards</strong>: Easily toggle between
-            <strong>AA</strong> and the stricter <strong>AAA</strong> compliance
-            levels for text contrast. Non-text elements are checked against the
-            required <code>3:1</code> ratio.
+            <strong>Customizable Contrast Ratios</strong>: Define your own
+            minimum contrast ratios for normal text, large text, and UI elements
+            in the settings. Your preferences are saved for future use.
+          </li>
+          <li>
+            <strong>Theme Switcher</strong>: Choose between a light or dark
+            theme from the settings page.
           </li>
           <li>
             <strong>Hidden Layer Detection</strong>: The plugin automatically
             ignores any hidden layers (<code>visible: false</code>) in your
-            selection, so you only get results for what's actually visible in
-            your design.
+            selection.
           </li>
           <li>
             <strong>Interactive Results List</strong>:
@@ -146,10 +150,6 @@
           <li>
             <strong>Advanced Filtering</strong>: Quickly filter the results by
             type (All, Text, Color) or search for specific layers by name.
-          </li>
-          <li>
-            <strong>Sleek Dark Mode UI</strong>: A clean, dark-themed interface
-            that's easy on the eyes.
           </li>
         </ul>
 
@@ -186,19 +186,9 @@
             background colors and determines their contrast ratio.
           </li>
           <li>
-            <strong>Compliance Check</strong>:
-            <ul class="list-disc pl-5 mt-2 space-y-1">
-              <li>
-                <strong>Text</strong>: Compares the ratio against
-                <code>4.5:1</code> (AA) / <code>7:1</code> (AAA) for normal
-                text, and <code>3:1</code> (AA) / <code>4.5:1</code> (AAA) for
-                large text.
-              </li>
-              <li>
-                <strong>Colors</strong>: Compares the ratio against the standard
-                <code>3:1</code> for non-text elements.
-              </li>
-            </ul>
+            <strong>Compliance Check</strong>: It compares the calculated ratio
+            against the required minimums—either the WCAG AA defaults or your
+            custom-saved ratios from the settings.
           </li>
         </ol>
 
