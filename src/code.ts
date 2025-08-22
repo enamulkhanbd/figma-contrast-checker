@@ -23,6 +23,13 @@ figma.ui.onmessage = async (msg) => {
       return;
     }
 
+    // Get custom ratios from settings, with fallbacks to WCAG defaults
+    const customRatios = msg.ratios || {
+      normalText: 4.5,
+      largeText: 3,
+      nonText: 3,
+    };
+
     const allTextNodes = findAllTextNodes(selection);
     const allColorNodes = findAllSolidFillNodes(selection);
 
@@ -36,14 +43,16 @@ figma.ui.onmessage = async (msg) => {
         const fontSize = textNode.fontSize as number;
         const fontWeight = textNode.fontWeight as number;
         const isLarge = isLargeText(fontSize, fontWeight);
-        const requiredRatioAA = isLarge ? 3 : 4.5;
+        const requiredRatio = isLarge
+          ? customRatios.largeText
+          : customRatios.normalText;
         return {
           type: "text",
           name: textNode.characters.substring(0, 50),
           contrast: contrastRatio.toFixed(2),
           id: textNode.id,
-          pass: contrastRatio >= requiredRatioAA,
-          required: requiredRatioAA,
+          pass: contrastRatio >= requiredRatio,
+          required: requiredRatio,
         };
       }
       return null;
@@ -58,7 +67,7 @@ figma.ui.onmessage = async (msg) => {
           foregroundColor,
           backgroundColor,
         );
-        const requiredRatio = 3;
+        const requiredRatio = customRatios.nonText;
         return {
           type: "color",
           name: colorNode.name,
@@ -84,6 +93,11 @@ figma.ui.onmessage = async (msg) => {
       figma.currentPage.selection = [node as SceneNode];
       figma.viewport.scrollAndZoomIntoView([node as SceneNode]);
     }
+  } else if (msg.type === "save-settings") {
+    await figma.clientStorage.setAsync("customRatios", msg.ratios);
+  } else if (msg.type === "load-settings") {
+    const ratios = await figma.clientStorage.getAsync("customRatios");
+    figma.ui.postMessage({ type: "settings-loaded", ratios: ratios });
   }
 };
 

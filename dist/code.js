@@ -28,6 +28,12 @@ figma.ui.onmessage = (msg) => __awaiter(void 0, void 0, void 0, function* () {
             });
             return;
         }
+        // Get custom ratios from settings, with fallbacks to WCAG defaults
+        const customRatios = msg.ratios || {
+            normalText: 4.5,
+            largeText: 3,
+            nonText: 3,
+        };
         const allTextNodes = findAllTextNodes(selection);
         const allColorNodes = findAllSolidFillNodes(selection);
         const textResultsPromises = allTextNodes.map((textNode) => __awaiter(void 0, void 0, void 0, function* () {
@@ -41,14 +47,16 @@ figma.ui.onmessage = (msg) => __awaiter(void 0, void 0, void 0, function* () {
                 const fontSize = textNode.fontSize;
                 const fontWeight = textNode.fontWeight;
                 const isLarge = isLargeText(fontSize, fontWeight);
-                const requiredRatioAA = isLarge ? 3 : 4.5;
+                const requiredRatio = isLarge
+                    ? customRatios.largeText
+                    : customRatios.normalText;
                 return {
                     type: "text",
                     name: textNode.characters.substring(0, 50),
                     contrast: contrastRatio.toFixed(2),
                     id: textNode.id,
-                    pass: contrastRatio >= requiredRatioAA,
-                    required: requiredRatioAA,
+                    pass: contrastRatio >= requiredRatio,
+                    required: requiredRatio,
                 };
             }
             return null;
@@ -60,7 +68,7 @@ figma.ui.onmessage = (msg) => __awaiter(void 0, void 0, void 0, function* () {
             const backgroundColor = getBackgroundColor(colorNode);
             if (foregroundColor && backgroundColor) {
                 const contrastRatio = getContrastRatio(foregroundColor, backgroundColor);
-                const requiredRatio = 3;
+                const requiredRatio = customRatios.nonText;
                 return {
                     type: "color",
                     name: colorNode.name,
@@ -84,6 +92,13 @@ figma.ui.onmessage = (msg) => __awaiter(void 0, void 0, void 0, function* () {
             figma.currentPage.selection = [node];
             figma.viewport.scrollAndZoomIntoView([node]);
         }
+    }
+    else if (msg.type === "save-settings") {
+        yield figma.clientStorage.setAsync("customRatios", msg.ratios);
+    }
+    else if (msg.type === "load-settings") {
+        const ratios = yield figma.clientStorage.getAsync("customRatios");
+        figma.ui.postMessage({ type: "settings-loaded", ratios: ratios });
     }
 });
 function findAllTextNodes(nodes) {
